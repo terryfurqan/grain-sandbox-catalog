@@ -1,0 +1,19 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local database & virtualenvs
+catalog.db*
+.venv/
+venv/
+env/
+
+# Sensitive credentials & environment files
+credentials.json
+.env
+
+# OS metadata
+.DS_Store
+Thumbs.db
