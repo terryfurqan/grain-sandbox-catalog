@@ -133,7 +133,7 @@ While both fluid PIV and geological sandbox PIV utilize the mathematical engine 
 | :--- | :--- | :--- |
 | **Material Medium** | Transparent fluid (water, air, oil, glycerin). | Polydisperse opaque granular aggregate (quartz sand, corundum, glass beads). |
 | **Illumination Source** | High-energy pulsed Nd:YAG laser sheet ($532\text{ nm}$) firing in optical darkness. | Diffuse oblique visible LED/halogen light bank with polarizing filters to prevent glare. |
-| **Seeding / Tracers** | Microscopic synthetic particles (e.g., $1-10\text{ \mu m}$ hollow glass spheres, fluorescent dye) matched to fluid density ($\text{St} \ll 1$). | Natural granular speckle pattern formed by natural quartz grain facets, pigmentation, and micro-shadows. |
+| **Seeding / Tracers** | Microscopic synthetic particles (e.g., $1-10\,\mu\text{m}$ hollow glass spheres, fluorescent dye) matched to fluid density ($\text{St} \ll 1$). | Natural granular speckle pattern formed by natural quartz grain facets, pigmentation, and micro-shadows. |
 | **Kinematic Tracking Frame** | **Eulerian**: Measures instantaneous velocity field $\mathbf{V}(\mathbf{x}, t)$ across fixed spatial coordinates as fluid flows through the laser plane. | **Lagrangian / Incremental-Lagrangian**: Tracks surface texture displacement $\mathbf{u}(\mathbf{X}, t)$ and accumulates finite strain $\mathbf{F}(\mathbf{X})$. |
 | **Out-of-Plane Motion** | Out-of-plane velocity ($w_z$) causes tracers to enter/exit the laser light sheet, resulting in complete signal loss between frames. | Grain motion is primarily bounded to the free surface, but out-of-plane rolling, grain tumbling, and gravitational avalanching cause decorrelation. |
 | **Primary Physical Output** | Instantaneous velocity ($\mathbf{V}$), vorticity ($\mathbf{\omega} = \nabla \times \mathbf{V}$), Reynolds stress tensor ($\overline{u'v'}$), turbulence kinetic energy ($k$). | Cumulative displacement ($\mathbf{u}$), velocity magnitude ($|\mathbf{V}|$), **Symmetric Shear Strain** ($\gamma_{xy}$), Dilatancy/Volumetric Strain ($\nabla \cdot \mathbf{u}$). |
@@ -286,7 +286,7 @@ $$\text{Bias}_{\text{RMS}} = \sqrt{\frac{1}{K} \sum_{k=1}^K \left( H_k - 1.0 \ri
 
 > [!IMPORTANT]
 > **Grain-to-Pixel Ratio (GPR) Rule for Laboratory Setup**:
-> To guarantee $\text{Bias}_{\text{RMS}} < 0.30$, laboratory imaging systems must ensure that a single average sand grain ($d_{50} \approx 200 - 300\text{ \mu m}$) is resolved across at least **$2.5$ to $4.0\text{ pixels}$** on the camera sensor. If optical magnification drops below $1.5\text{ px/grain}$, optical defocusing (slightly blurring the lens) or sub-pixel image upsampling must be applied.
+> To guarantee $\text{Bias}_{\text{RMS}} < 0.30$, laboratory imaging systems must ensure that a single average sand grain ($d_{50} \approx 200 - 300\,\mu\text{m}$) is resolved across at least **$2.5$ to $4.0\text{ pixels}$** on the camera sensor. If optical magnification drops below $1.5\text{ px/grain}$, optical defocusing (slightly blurring the lens) or sub-pixel image upsampling must be applied.
 
 ---
 
@@ -298,7 +298,7 @@ In a physical tectonic shortening experiment, the motorized pushing wall provide
 In our standardized reference sandbox setup:
 * Electromechanical stepper motor speed: $V_{\text{motor}} = 3.0700\text{ mm/min} = 0.05117\text{ mm/s}$
 * Camera frame capture interval: $\Delta t = 2.0000\text{ s/frame}$
-* Optical spatial scaling calibration factor: $\kappa = 32.008\text{ \mu m/px} \equiv 31.242\text{ px/mm}$
+* Optical spatial scaling calibration factor: $\kappa = 32.008\,\mu\text{m/px} \equiv 31.242\text{ px/mm}$
 * **Theoretical Pusher Wall Velocity**:
   $$V_{\text{theo}} = \frac{V_{\text{motor}} \cdot \Delta t}{\kappa} = \frac{3.0700\text{ mm/min} \times (2.0000\text{ s} / 60\text{ s/min})}{0.032008\text{ mm/px}} = 3.1970\text{ px/frame}$$
 
