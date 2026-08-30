@@ -5,19 +5,18 @@ Aturan baku manajemen folder eksperimen pemodelan analog tektonik dan geologi (*
 
 ---
 
-## 📂 1. Format Nama Folder Utama (Root Eksperimen)
+## 📂 1. Format Nama Folder Utama (Root Eksperimen di 0010)
 
 Setiap eksperimen sandbox disimpan sebagai satu folder mandiri di dalam `D:\999_GRAIN_EXPLORER\0010\` dengan format baku:
 
-$$\mathbf{[PROJECT] - [DDMMYY] \text{ (EXP [N])}}$$
+$$\mathbf{[yymmdd-hhmmss] - [Nama Folder Asli Eksperimen]}$$
 
-- **`[PROJECT]`**: Nama formasi/proyek riset geologi (contoh: `TALAWANG`, `MAHAKAM`, `KUTAI`, `BARITO`).
-- **`[DDMMYY]`**: Tanggal pelaksanaan eksperimen dalam 6 digit angka (contoh: `280826` untuk 28 Agustus 2026).
-- **`(EXP [N])`**: Nomor urut eksperimen pada tanggal/sesi tersebut (contoh: `(EXP 1)`, `(EXP 2)`).
+- **`[yymmdd-hhmmss]`**: Timestamp waktu eksekusi/perintah pemrosesan (contoh: `260830-171926` untuk 30 Agustus 2026 pukul 17:19:26).
+- **`[Nama Folder Asli Eksperimen]`**: Nama folder input eksperimen asli yang diolah (contoh: `CROP_ 4cm _ 0 deg _ thrust fault_ada gunung - 0` atau `TALAWANG - 280826 (EXP 2)`).
 
-**Contoh Valid**:
-- `TALAWANG - 280826 (EXP 2)`
-- `TALAWANG - 300626 (EXP 1)`
+**Contoh Valid di `0010\`**:
+- `D:\999_GRAIN_EXPLORER\0010\260830-171926 - CROP_ 4cm _ 0 deg _ thrust fault_ada gunung - 0\`
+- `D:\999_GRAIN_EXPLORER\0010\260828-143000 - TALAWANG - 280826 (EXP 2)\`
 
 ---
 
