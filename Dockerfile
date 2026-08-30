@@ -1,37 +1,49 @@
 # ==============================================================================
 # GRAIN Sandbox Experiment Data Server - Docker Containerfile
+# Fully compatible with Hugging Face Spaces (Port 7860, Non-Root UID 1000)
+# and standard Cloud Web Services (Render.com, Railway, Fly.io, Local Docker)
 # ==============================================================================
 FROM python:3.12-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8000 \
+    PORT=7860 \
     HOST=0.0.0.0
 
-# Set working directory
-WORKDIR /app
-
-# Install curl for health check (optional) & build dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Set up non-root user (UID 1000) for Hugging Face Spaces compliance & security
+RUN useradd -m -u 1000 user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
+
+WORKDIR /app
+
+# Ensure directory permissions for user 1000
+RUN chown -R user:user /app
+
+# Switch to non-root user
+USER user
+
 # Copy and install python dependencies
-COPY requirements.txt .
+COPY --chown=user:user requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code
-COPY app/ ./app/
-COPY .env.example ./.env.example
+COPY --chown=user:user app/ ./app/
+COPY --chown=user:user .env.example ./.env.example
 
-# Expose server port
-EXPOSE 8080
+# Expose default port (7860 for Hugging Face Spaces)
+EXPOSE 7860
 
-# Health check
+# Health check (dynamically evaluates PORT environment variable)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/stats').read()" || exit 1
+    CMD python -c "import urllib.request, os; port=os.environ.get('PORT', '7860'); urllib.request.urlopen(f'http://localhost:{port}/api/stats').read()" || exit 1
 
-# Command to run the application using Uvicorn
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Start the application using Uvicorn (reads $PORT or defaults to 7860)
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-7860}"]

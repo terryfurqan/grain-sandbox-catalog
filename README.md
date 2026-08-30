@@ -1,6 +1,18 @@
+---
+title: GRAIN Sandbox Experiment Data Server
+emoji: 🏜️
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 # 🏔️ GRAIN Sandbox Experiment Data Server
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=flat&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com)
+[![Hugging Face Spaces](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow.svg)](https://huggingface.co/spaces)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg?style=flat&logo=Python&logoColor=white)](https://www.python.org)
 [![Google Drive API](https://img.shields.io/badge/Google%20Drive%20API-v3-4285F4.svg?style=flat&logo=googledrive&logoColor=white)](https://developers.google.com/drive)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)

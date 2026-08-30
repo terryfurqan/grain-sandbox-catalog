@@ -1,0 +1,27 @@
+name: Sync to Hugging Face Spaces
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to Hugging Face Space
+        if: env.HF_TOKEN != ''
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ secrets.HF_SPACE }} # e.g. terryfurqan/grain-sandbox-catalog
+        run: |
+          if [ -n "$HF_TOKEN" ] && [ -n "$HF_SPACE" ]; then
+            git push --force https://hf_user:$HF_TOKEN@huggingface.co/spaces/$HF_SPACE main:main
+          else
+            echo "Secrets HF_TOKEN or HF_SPACE not configured. Skipping automated push."
+          fi

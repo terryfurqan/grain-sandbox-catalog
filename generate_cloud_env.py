@@ -11,6 +11,18 @@ import argparse
 import subprocess
 from pathlib import Path
 
+# Ensure UTF-8 output encoding on Windows terminals
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 BASE_DIR = Path(__file__).resolve().parent
 
 def parse_args():
@@ -124,21 +136,36 @@ def main():
     print(f" Project ID   : {project_id}")
     print(f" Client Email : {client_email}")
     print("-" * 80)
-    print(" Langkah berikutnya di Google Drive:")
+    print(" 📂 Langkah di Google Drive:")
     print(f" 1. Buka Google Drive, klik kanan folder eksperimen GRAIN Sandbox.")
     print(f" 2. Bagikan (Share) ke email di atas dengan role 'Viewer' (atau 'Editor').")
     print(f" 3. Salin Folder ID dari URL browser.")
     print("-" * 80)
-    print(" Langkah di Cloud Dashboard (Render.com / Railway):")
-    print(" Tambahkan Environment Variable berikut:")
+    print(" 🤗 Langkah di HUGGING FACE SPACES (Settings -> Variables and secrets):")
+    print(" Tambahkan di bagian SECRETS (New secret):")
+    print("   • Key: GDRIVE_SERVICE_ACCOUNT_RAW_JSON")
+    print(f"     Value: (String raw JSON yang telah disalin ke clipboard)")
+    print("   • Key: ADMIN_PIN")
+    print("     Value: 123456 (atau PIN admin pilihan Anda)")
     print()
-    print("   Key   : GDRIVE_SERVICE_ACCOUNT_RAW_JSON")
-    print(f"   Value : {compact_json[:60]}... [total {len(compact_json)} karakter] ...")
+    print(" Tambahkan di bagian VARIABLES (New variable):")
+    print("   • Key: GDRIVE_ROOT_FOLDER_ID")
+    print("     Value: (Folder ID Google Drive Anda)")
+    print("   • Key: PORTAL_TITLE")
+    print("     Value: GRAIN Sandbox Experiment Data Server")
+    print("   • Key: PORTAL_SUBTITLE")
+    print("     Value: Analog Geological & Tectonic Modeling Video/Photo Catalog")
+    print("-" * 80)
+    print(" 🚀 Langkah di RENDER.COM / RAILWAY:")
+    print(" Tambahkan Environment Variable:")
+    print("   • GDRIVE_SERVICE_ACCOUNT_RAW_JSON")
+    print("   • GDRIVE_ROOT_FOLDER_ID")
+    print("   • ADMIN_PIN")
     print()
     if copied:
-        print(" [OK] Value telah OTOMATIS DISALIN ke clipboard Anda! Tinggal Ctrl+V di dashboard.")
+        print(" [OK] JSON Kredensial telah OTOMATIS DISALIN ke clipboard Anda! Tinggal Ctrl+V.")
     else:
-        print(" Salin string lengkap di bawah ini:")
+        print(" Salin string JSON lengkap di bawah ini:")
         print("-" * 80)
         print(compact_json)
         print("-" * 80)

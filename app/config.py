@@ -1,4 +1,5 @@
 from pathlib import Path
+from pydantic import Field, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import json
 import os
@@ -7,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Settings(BaseSettings):
     SERVER_HOST: str = "0.0.0.0"
-    SERVER_PORT: int = 8080
+    SERVER_PORT: int = Field(default=8080, validation_alias=AliasChoices("SERVER_PORT", "PORT"))
     GDRIVE_SERVICE_ACCOUNT_JSON: str = "credentials.json"
     GDRIVE_ROOT_FOLDER_ID: str = ""
     ADMIN_PIN: str = "123456"
