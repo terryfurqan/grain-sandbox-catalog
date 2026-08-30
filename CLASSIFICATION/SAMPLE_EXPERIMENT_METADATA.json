@@ -1,0 +1,56 @@
+{
+  "intent": "Research",
+  "project_name": "",
+  "research_topic": "Fundamental Thrust Wedge Propagation and Taper Mechanics",
+  "project_basin": "TALAWANG",
+  "target_structural_style": "Fold-and-Thrust Belt (FTB / Thrust Wedge)",
+  "tectonic_system": "Contractional",
+  "machine_apparatus": "IAGI - Dorong",
+  "boundary_detachment_mechanism": "Rigid Mobile Wall (Piston)",
+  "basal_detachment_dip_deg": 0.0,
+  "deformation_stages": "Single Phase",
+  "total_sand_thickness_cm": "3",
+  "materials": [
+    "Sand",
+    "Gypsum"
+  ],
+  "reuse_sand": "No",
+  "syn_kinematic_processes": "None",
+  "camera_metadata": {
+    "camera_model": "SONY ILCE-6000",
+    "lens_model": "E PZ 16-50mm F3.5-5.6 OSS",
+    "focal_length_mm": 28.0,
+    "iso": 100,
+    "exposure_time_sec": "1/30",
+    "f_number": 8.0,
+    "resolution_raw_px": "6000x4000",
+    "pixel_scale_mm_per_px": 0.125
+  },
+  "available_camera_views": [
+    "1.x Map View (Top / Nadir)",
+    "2.x Profile View 1 (P1)",
+    "4a.x Slice Map (Slice M)",
+    "4b.x Slice Profile (Slice P)"
+  ],
+  "piv_parameters": {
+    "passes_sequence": "64 -> 32 -> 25 px",
+    "final_iw_size_px": 25,
+    "step_overlap_percent": 75,
+    "window_shifting": "Continuous Window Shifting (CWS)",
+    "outlier_filter": "Normalized Median Test",
+    "computed_vector_fields": [
+      "Velocity Magnitude (|V|)",
+      "Symmetric Shear Strain (gamma_xy)",
+      "Displacement Vector (u, v)"
+    ]
+  },
+  "deliverables_detected": [
+    "QPIV Shortening Curve & Pruning Log",
+    ".grainraw Binary Container",
+    "MP4 Single Velmag Video",
+    "MP4 Dual VMSST Video",
+    "MP4 Normalized PIV Video",
+    "Serial Slice Comparison Slide",
+    "Evolution 5% PowerPoint Report (.pptx)"
+  ]
+}

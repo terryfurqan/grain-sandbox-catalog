@@ -1,0 +1,19 @@
+{
+  "intent": "Project",
+  "project_name": "KUFPEC Kutai Analog Study 2026",
+  "research_topic": "",
+  "project_basin": "KUTAI",
+  "target_structural_style": "Inversion Anticline (Positive/Negative Inversion)",
+  "tectonic_system": "Hybrid",
+  "machine_apparatus": "KUFPEC squeeze",
+  "boundary_detachment_mechanism": "Rigid Mobile Wall (Piston)",
+  "basal_detachment_dip_deg": 0.0,
+  "deformation_stages": "Multi-Phase Inversion (Ext -> Comp)",
+  "total_sand_thickness_cm": "4",
+  "materials": [
+    "Sand",
+    "Silicone/PDMS (Ductile Decollement/Salt Analogue)"
+  ],
+  "reuse_sand": "No",
+  "syn_kinematic_processes": "Incremental Infill (Syn-kinematic Sedimentation)"
+}

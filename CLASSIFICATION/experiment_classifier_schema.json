@@ -1,0 +1,240 @@
+{
+  "": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GRAIN2SandboxExperimentClassifiers",
+  "description": "Standardized Classifier and Metadata Schema for GRAIN 2.0 Sandbox Analog Tectonic Modeling Experiments",
+  "type": "object",
+  "required": [
+    "intent",
+    "project_basin",
+    "tectonic_system",
+    "machine_apparatus",
+    "total_sand_thickness_cm",
+    "materials",
+    "reuse_sand",
+    "basal_detachment_dip_deg",
+    "boundary_detachment_mechanism",
+    "deformation_stages",
+    "syn_kinematic_processes"
+  ],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "enum": [
+        "Research",
+        "Project"
+      ],
+      "description": "Primary purpose of the sandbox experiment (Academic Research vs Commercial/Client Project)"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Specific commercial / client project name (e.g., 'KUFPEC Kutai Analog Study', 'BP Berau Deepwater Inversion', 'Pertamina Hulu Mahakam'). REQUIRED when intent is 'Project'."
+    },
+    "research_topic": {
+      "type": "string",
+      "description": "Specific academic research topic or grant name when intent is 'Research' (e.g., 'Fundamental Salt Diapirism R&D', 'Thrust Wedge Taper Mechanics')."
+    },
+    "project_basin": {
+      "type": "string",
+      "description": "Name of the formation, basin, or geological target project (e.g. TALAWANG, MAHAKAM, KUTAI, BARITO, OMBILIN)"
+    },
+    "target_structural_style": {
+      "type": "string",
+      "enum": [
+        "Fold-and-Thrust Belt (FTB / Thrust Wedge)",
+        "Rift Graben / Half-Graben (Normal Faults)",
+        "Pull-Apart Basin (Transtensional)",
+        "Transpressional Pop-Up / Positive Flower",
+        "Inversion Anticline (Positive/Negative Inversion)",
+        "Salt/Ductile Tectonics (Diapir / Pillow / Canopy)",
+        "Delta Gravity-Driven / Toe-Thrust",
+        "Basement-Involved Fault-Propagation",
+        "Other / Unspecified"
+      ],
+      "description": "Target structural geology feature or analog style simulated by the experiment"
+    },
+    "tectonic_system": {
+      "type": "string",
+      "enum": [
+        "Extensional",
+        "Contractional",
+        "Strike Slip",
+        "Hybrid"
+      ],
+      "description": "Dominant tectonic deformation regime"
+    },
+    "machine_apparatus": {
+      "type": "string",
+      "enum": [
+        "IAGI - Dorong",
+        "IAGI - Tarik",
+        "BP - Dorong",
+        "BP - Tarik",
+        "BP - Dorong-Tarik",
+        "KUFPEC squeeze",
+        "KUFPEC base plate",
+        "KUFPEC mix"
+      ],
+      "description": "Experimental sandbox rig apparatus and drive mechanism used"
+    },
+    "boundary_detachment_mechanism": {
+      "type": "string",
+      "enum": [
+        "Rigid Mobile Wall (Piston)",
+        "Basal Mylar/Sheet (Conveyor Pull)",
+        "Rubber Sheet (Elastic Stretching)",
+        "Basal Fault Ramp/Step",
+        "Dual Mobile Wall (Symmetric/Asymmetric)"
+      ],
+      "description": "Boundary condition and basal detachment drive mechanism"
+    },
+    "basal_detachment_dip_deg": {
+      "type": "number",
+      "minimum": -30,
+      "maximum": 30,
+      "description": "Basal detachment slope / tilt angle in degrees (-30 deg down-dip to +30 deg up-dip)"
+    },
+    "deformation_stages": {
+      "type": "string",
+      "enum": [
+        "Single Phase",
+        "Multi-Phase Inversion (Ext -> Comp)",
+        "Multi-Phase Reactivation (Comp -> Ext)",
+        "Transtension/Transpression Sequence"
+      ],
+      "description": "Deformation staging and tectonic reactivation phases"
+    },
+    "total_sand_thickness_cm": {
+      "type": "string",
+      "enum": [
+        "< 1",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "> 10"
+      ],
+      "description": "Total initial sandpack / model thickness in centimeters"
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Sand",
+          "Gypsum",
+          "Beads (Microbeads / Glass beads)",
+          "Silicone/PDMS (Ductile Decollement/Salt Analogue)",
+          "Basement Involved (Rigid Pre-cut Block / Fault Step)"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "List of physical modeling materials used in the sandbox pack"
+    },
+    "reuse_sand": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "description": "Whether recycled/re-sieved sand was used (Yes) or fresh sand (No)"
+    },
+    "syn_kinematic_processes": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Incremental Infill (Syn-kinematic Sedimentation)",
+        "Continuous Infill",
+        "Syn-kinematic Erosion"
+      ],
+      "description": "Syn-kinematic sedimentation or surface erosion applied during the motor run"
+    },
+    "camera_metadata": {
+      "type": "object",
+      "description": "Optical acquisition metadata auto-resolved from EXIF headers",
+      "properties": {
+        "camera_model": { "type": "string" },
+        "lens_model": { "type": "string" },
+        "focal_length_mm": { "type": "number" },
+        "iso": { "type": "integer" },
+        "exposure_time_sec": { "type": "string" },
+        "f_number": { "type": "number" },
+        "resolution_raw_px": { "type": "string" },
+        "pixel_scale_mm_per_px": { "type": "number" }
+      }
+    },
+    "available_camera_views": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "1.x Map View (Top / Nadir)",
+          "2.x Profile View 1 (P1)",
+          "3.x Profile View 2 (P2)",
+          "4a.x Slice Map (Slice M)",
+          "4b.x Slice Profile (Slice P)",
+          "5.x 3D / Oblique View"
+        ]
+      },
+      "description": "Camera viewpoints present and auto-detected from folder structure"
+    },
+    "piv_parameters": {
+      "type": "object",
+      "description": "Particle Image Velocimetry settings auto-resolved from .npz or summary JSON",
+      "properties": {
+        "passes_sequence": { "type": "string" },
+        "final_iw_size_px": { "type": "integer" },
+        "step_overlap_percent": { "type": "number" },
+        "window_shifting": { "type": "string" },
+        "outlier_filter": { "type": "string" },
+        "computed_vector_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Velocity Magnitude (|V|)",
+              "Symmetric Shear Strain (gamma_xy)",
+              "Displacement Vector (u, v)",
+              "Normal Strain (exx, eyy)",
+              "Vorticity (omega_z)"
+            ]
+          }
+        }
+      }
+    },
+    "deliverables_detected": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "QPIV Shortening Curve & Pruning Log",
+          ".grainraw Binary Container",
+          "MP4 Single Velmag Video",
+          "MP4 Dual VMSST Video",
+          "MP4 Normalized PIV Video",
+          "Serial Slice Comparison Slide",
+          "Evolution 5% PowerPoint Report (.pptx)"
+        ]
+      },
+      "description": "Analytical and visualization deliverables detected automatically in OUTPUT/ folder"
+    }
+  },
+  "if": {
+    "properties": {
+      "intent": {
+        "const": "Project"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "project_name"
+    ]
+  }
+}

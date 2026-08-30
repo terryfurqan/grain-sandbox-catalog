@@ -66,3 +66,73 @@ OUTPUT/
 1. **MD5 Checksum Audit**: Setiap file foto dan video diaudit nilai hash-nya untuk mencegah duplikasi nama/isi file.
 2. **Eliminasi File Redundan**: File salinan otomatis bertanda ` - Copy.jpg` atau folder subset sampling yang 100% identik dieleminasi.
 3. **Zero Data Loss Guarantee**: Verifikasi integritas dilakukan sebelum proses pengarsipan atau katalogisasi manifest.
+
+---
+
+## 🧭 6. Standar Klasifikasi & Metadata Eksperimen (5 Pilar GRAIN 2.0)
+
+Skema klasifikasi terstandarisasi untuk kategorisasi eksperimen analog tektonik:
+
+### Pilar 1: Intent & Target Geologi
+- **Intent**: `Research` (Riset akademis/internal) | `Project` (Studi komersial/klien/industri)
+- **Project Name (Wajib jika Intent = Project)**: Nama kontrak/studi proyek spesifik (misal: `KUFPEC Kutai Study 2026`, `BP Berau Deepwater Inversion`, `Pertamina Hulu Mahakam Analog Sandbox`).
+- **Research Topic (Opsional jika Intent = Research)**: Topik riset spesifik / hibah riset (misal: `Fundamental Salt Diapirism R&D`, `Thrust Wedge Taper Mechanics`).
+- **Project/Basin Target**: Nama formasi atau cekungan geologi (misal: `TALAWANG`, `MAHAKAM`, `KUTAI`, `BARITO`, `OMBILIN`).
+- **Target Gaya Struktur (*Target Structural Style*)**:
+  - `Fold-and-Thrust Belt (FTB / Thrust Wedge)`
+  - `Rift Graben / Half-Graben (Normal Faults)`
+  - `Pull-Apart Basin (Transtensional)`
+  - `Transpressional Pop-Up / Positive Flower`
+  - `Inversion Anticline (Positive/Negative Inversion)`
+  - `Salt/Ductile Tectonics (Diapir / Pillow / Canopy)`
+  - `Delta Gravity-Driven / Toe-Thrust`
+  - `Basement-Involved Fault-Propagation`
+
+### Pilar 2: Kinematika & Mesin Penggerak
+- **Jenis Sistem Tektonik**: `Extensional` | `Contractional` | `Strike Slip` | `Hybrid`
+- **Mesin yang Dipakai**:
+  - `IAGI - Dorong` | `IAGI - Tarik`
+  - `BP - Dorong` | `BP - Tarik` | `BP - Dorong-Tarik`
+  - `KUFPEC squeeze` | `KUFPEC base plate` | `KUFPEC mix`
+- **Tipe Detachment / Kondisi Batas Alas**:
+  - `Rigid Mobile Wall (Piston)`
+  - `Basal Mylar/Sheet (Conveyor Pull)`
+  - `Rubber Sheet (Elastic Stretching)`
+  - `Basal Fault Ramp/Step`
+  - `Dual Mobile Wall (Symmetric/Asymmetric)`
+- **Kemiringan Basal Detachment**: Rentang sudut `-30°` (down-dip) s.d. `+30°` (up-dip)
+- **Tahapan Deformasi**:
+  - `Single Phase`
+  - `Multi-Phase Inversion (Ext -> Comp)`
+  - `Multi-Phase Reactivation (Comp -> Ext)`
+  - `Transtension/Transpression Sequence`
+
+### Pilar 3: Material & Stratigrafi Pasir
+- **Ketebalan Total Pasir**: `< 1 cm`, `1 cm`, `2 cm`, `3 cm`, `4 cm`, `5 cm`, `6 cm`, `7 cm`, `8 cm`, `9 cm`, `10 cm`, `> 10 cm`
+- **Material Campuran (Multi-select)**:
+  - `Sand` (Pasir kuarsa kering)
+  - `Gypsum` (Plaster rapuh)
+  - `Beads (Microbeads / Glass beads)`
+  - `Silicone/PDMS (Ductile Decollement / Salt Analogue)`
+  - `Basement Involved (Rigid Pre-cut Block / Fault Step)`
+- **Reuse Sand (Daur Ulang)**: `Yes` | `No`
+- **Sedimentasi / Erosi Syn-kinematik**:
+  - `None`
+  - `Incremental Infill (Syn-kinematic Sedimentation)`
+  - `Continuous Infill`
+  - `Syn-kinematic Erosion`
+
+### Pilar 4: Akuisisi Citra & PIV (Auto-Resolved)
+- **Kamera & Optik (dari EXIF 1.1 RAW)**: Model kamera, Lensa, Focal Length, ISO, Shutter Speed, Aperture, Resolusi RAW, Pixel Scale (mm/px).
+- **Sudut Pandang Tersedia (dari Taksonomi Folder)**: Map View (`1.x`), Profile P1 (`2.x`), Profile P2 (`3.x`), Slice M (`4a.x`), Slice P (`4b.x`), 3D Oblique (`5.x`).
+- **Parameter PIV (dari .npz / JSON)**: Multi-pass sequence (misal `64 -> 32 -> 25 px`), Final IW (`25 px`), Overlap (`75%`), Continuous Window Shifting (CWS), Normalized Median Test outlier filter, Vector fields ($|V|, \gamma_{xy}, u, v$).
+
+### Pilar 5: Luaran Analisis & Deliverables (Auto-Detected di `OUTPUT/`)
+- `QPIV Shortening Curve & Pruning Log` (`OUTPUT/QPIV/`)
+- `.grainraw Binary Container` (`OUTPUT/GRAINRAW/`)
+- `Single Velmag MP4 Timelapse` (`OUTPUT/VIDEOS/`)
+- `Dual Split-Screen VMSST MP4 Timelapse` (`OUTPUT/VIDEOS/`)
+- `Normalized PIV MP4 Timelapse` (`OUTPUT/VIDEOS/`)
+- `Serial Slice Comparison Slide` (`OUTPUT/SLICES/`)
+- `Evolution 5% PowerPoint Report (.pptx)` (`OUTPUT/REPORTS/`)
+
