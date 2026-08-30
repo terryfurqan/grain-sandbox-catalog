@@ -1,18 +1,29 @@
-# Python
+# Python bytecode & cache
 __pycache__/
 *.py[cod]
 *$py.class
-*.env
-.venv/
-env/
-venv/
+.pytest_cache/
 
-# IDE
-.vscode/
-.idea/
-
-# Database & Logs
+# Local database, logs & virtualenvs
 *.db
 *.db-journal
 *.db-wal
 *.log
+catalog.db*
+.venv/
+venv/
+env/
+
+# IDE & Config
+.vscode/
+.idea/
+
+# Sensitive credentials & environment files
+credentials.json
+.env
+*.env
+
+# OS metadata
+.DS_Store
+Thumbs.db
+

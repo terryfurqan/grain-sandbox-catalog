@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup & Konfigurasi - {{ title }}</title>
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151f32',
+                            900: '#0f172a',
+                            950: '#080c16',
+                        },
+                        amber: {
+                            450: '#f7ab0a',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/custom.css">
+    
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950" x-data="setupWizard()" x-init="init()" x-cloak>
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        <span>GRAIN Sandbox Server</span>
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Setup Wizard</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Konfigurasi Koneksi Google Drive Cloud Storage</p>
+                </div>
+            </a>
+
+            <a 
+                href="/" 
+                class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                <span>Kembali ke Katalog</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Wizard Content -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+        <!-- Intro Banner -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="relative z-10 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-3">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    Panduan Integrasi Google Drive API
+                </div>
+                <h2 class="text-xl font-bold text-white tracking-tight">Setup Service Account Google Drive</h2>
+                <p class="text-xs text-slate-300 leading-relaxed mt-2">
+                    Web server katalog ini membaca video, foto time-lapse, dan file analisis eksperimen langsung dari Google Drive menggunakan kredensial <span class="text-amber-400 font-medium">Service Account</span> yang aman tanpa batas kuota login harian.
+                </p>
+            </div>
+        </div>
+
+        <!-- Wizard Steps Container -->
+        <div class="space-y-6">
+
+            <!-- STEP 1: Create Project & Enable Drive API -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-sm shrink-0 shadow-md shadow-amber-500/20">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-base font-bold text-white">Buat Project Google Cloud & Aktifkan Google Drive API</h3>
+                        <p class="text-xs text-slate-400 mt-1">Lakukan persiapan awal di konsol Google Cloud Platform.</p>
+                    </div>
+                </div>
+
+                <div class="pl-12 space-y-3">
+                    <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                        <li>
+                            Buka <a href="https://console.cloud.google.com/" target="_blank" class="text-amber-400 hover:underline font-medium inline-flex items-center gap-0.5">Google Cloud Console <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a> dan buat Project baru (contoh: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">grain-sandbox-server</code>).
+                        </li>
+                        <li>
+                            Masuk ke menu <strong>APIs & Services &gt; Library</strong>.
+                        </li>
+                        <li>
+                            Cari <strong class="text-white">"Google Drive API"</strong> lalu klik tombol <strong class="text-emerald-400">ENABLE (Aktifkan)</strong>.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- STEP 2: Create Service Account & Upload JSON -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-sm shrink-0 shadow-md shadow-amber-500/20">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-base font-bold text-white">Buat Service Account & Unduh File Kredensial JSON</h3>
+                        <p class="text-xs text-slate-400 mt-1">Unduh key file JSON dan upload langsung ke form di bawah ini.</p>
+                    </div>
+                </div>
+
+                <div class="pl-12 space-y-4">
+                    <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                        <li>Masuk ke menu <strong>IAM & Admin &gt; Service Accounts</strong> &rarr; Klik <strong>Create Service Account</strong>.</li>
+                        <li>Beri nama (contoh: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">grain-catalog-reader</code>) &rarr; Klik <strong>Done</strong>.</li>
+                        <li>Klik Service Account yang baru dibuat &rarr; Buka tab <strong>KEYS</strong> &rarr; <strong>Add Key &gt; Create new key &gt; JSON</strong> &rarr; File <code class="text-amber-400 font-mono">.json</code> akan terunduh otomatis ke komputer Anda.</li>
+                    </ol>
+
+                    <!-- Drag & Drop Uploader Box -->
+                    <div 
+                        class="mt-3 p-6 rounded-xl border-2 border-dashed transition-all text-center dropzone-border cursor-pointer relative"
+                        :class="isDragging ? 'dropzone-active border-amber-500' : 'border-slate-700 bg-slate-800/40 hover:bg-slate-800/70'"
+                        @dragover.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop.prevent="handleFileDrop($event)"
+                        @click="$refs.fileInput.click()"
+                    >
+                        <input 
+                            type="file" 
+                            x-ref="fileInput" 
+                            accept=".json,application/json" 
+                            class="hidden" 
+                            @change="handleFileSelect($event)"
+                        >
+
+                        <div class="space-y-2 pointer-events-none">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-white">Tarik & Lepaskan file <code class="text-amber-400">credentials.json</code> ke sini</p>
+                                <p class="text-[11px] text-slate-400">atau klik untuk memilih file dari komputer</p>
+                            </div>
+                        </div>
+
+                        <!-- Uploading indicator -->
+                        <div x-show="isUploading" class="absolute inset-0 bg-slate-900/90 rounded-xl flex items-center justify-center gap-2">
+                            <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span class="text-xs font-medium text-amber-400">Mengunggah & memvalidasi kredensial...</span>
+                        </div>
+                    </div>
+
+                    <!-- Upload Status & Detected Email Box -->
+                    <div x-show="uploadFeedback.msg" class="p-3 rounded-lg text-xs flex items-center gap-2.5" :class="uploadFeedback.isError ? 'bg-rose-500/10 border border-rose-500/20 text-rose-300' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'">
+                        <template x-if="uploadFeedback.isError">
+                            <svg class="w-4 h-4 shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </template>
+                        <template x-if="!uploadFeedback.isError">
+                            <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        </template>
+                        <span x-text="uploadFeedback.msg"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Share GDrive Folder to Service Account -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-sm shrink-0 shadow-md shadow-amber-500/20">
+                        3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-base font-bold text-white">Bagikan (Share) Folder Google Drive ke Email Service Account</h3>
+                        <p class="text-xs text-slate-400 mt-1">Berikan akses baca (Viewer / Editor) ke email Service Account agar server bisa mengakses file.</p>
+                    </div>
+                </div>
+
+                <div class="pl-12 space-y-4">
+                    <!-- Service Account Email Card with 1-Click Copy -->
+                    <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 space-y-2">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Email Service Account Anda:</span>
+                        <div class="flex items-center gap-2">
+                            <input 
+                                type="text" 
+                                readonly 
+                                :value="serviceAccountEmail || 'Upload credentials.json pada Langkah 2 terlebih dahulu'" 
+                                class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-amber-400 focus:outline-none select-all"
+                            >
+                            <button 
+                                @click="copyEmail()" 
+                                :disabled="!serviceAccountEmail"
+                                class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                <span x-text="copied ? 'Tersalin!' : 'Copy Email'"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                        <li>Buka Google Drive di browser &rarr; Temukan folder root yang berisi folder-folder eksperimen Sandbox Anda.</li>
+                        <li>Klik kanan pada folder tersebut &rarr; Pilih <strong>Share (Bagikan)</strong>.</li>
+                        <li>Paste email Service Account di atas ke kotak input bagikan.</li>
+                        <li>Pilih role sebagai <strong class="text-white">Viewer</strong> (atau Editor) &rarr; Hapus centang <em>Notify people</em> &rarr; Klik <strong>Share</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- STEP 4: Root Folder ID & Server Configuration -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-sm shrink-0 shadow-md shadow-amber-500/20">
+                        4
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-base font-bold text-white">Masukkan Google Drive Root Folder ID & PIN Admin</h3>
+                        <p class="text-xs text-slate-400 mt-1">Tentukan ID folder induk yang berisi eksperimen dan PIN otentikasi sinkronisasi.</p>
+                    </div>
+                </div>
+
+                <div class="pl-12 space-y-4">
+                    <!-- Guide to find Root Folder ID -->
+                    <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-300 space-y-1.5">
+                        <div class="flex items-center gap-2 text-amber-400 font-semibold">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Cara mengetahui Google Drive Folder ID:</span>
+                        </div>
+                        <p class="leading-relaxed text-slate-400">
+                            Buka folder di Google Drive, lihat URL di address bar browser Anda:<br>
+                            <code class="text-slate-300 font-mono text-[11px]">https://drive.google.com/drive/folders/<span class="text-amber-400 font-bold bg-amber-500/10 px-1 rounded">1a2B3c4D5e6F7g8H9_xyz</span></code><br>
+                            Salin bagian kode unik setelah <code class="font-mono">/folders/</code> tersebut.
+                        </p>
+                    </div>
+
+                    <!-- Config Input Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Root Folder ID -->
+                        <div class="space-y-1.5 md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-300">Google Drive Root Folder ID <span class="text-rose-400">*</span></label>
+                            <input 
+                                type="text" 
+                                x-model="rootFolderId" 
+                                placeholder="Contoh: 1a2B3c4D5e6F7g8H9_xyz..." 
+                                class="w-full px-3.5 py-2.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                            >
+                        </div>
+
+                        <!-- Admin PIN -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-300">PIN Admin (Otentikasi Sinkronisasi) <span class="text-rose-400">*</span></label>
+                            <input 
+                                type="password" 
+                                x-model="adminPin" 
+                                placeholder="Default: 123456" 
+                                class="w-full px-3.5 py-2.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                            >
+                        </div>
+
+                        <!-- Portal Title (Optional) -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-300">Judul Portal Web Server</label>
+                            <input 
+                                type="text" 
+                                x-model="portalTitle" 
+                                placeholder="GRAIN Sandbox Experiment Data Server" 
+                                class="w-full px-3.5 py-2.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Testing & Save Action Bar -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+            <!-- Connection Test Result Box -->
+            <div x-show="testResult.tested" class="p-4 rounded-xl text-xs space-y-1.5" :class="testResult.ok ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300' : 'bg-rose-500/10 border border-rose-500/20 text-rose-300'">
+                <div class="flex items-center gap-2 font-bold text-sm">
+                    <template x-if="testResult.ok">
+                        <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </template>
+                    <template x-if="!testResult.ok">
+                        <svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </template>
+                    <span x-text="testResult.ok ? 'Koneksi Berhasil!' : 'Koneksi Gagal!'"></span>
+                </div>
+                <p class="leading-relaxed" x-text="testResult.msg"></p>
+                <template x-if="testResult.folderName">
+                    <p class="text-slate-300 mt-1">Nama Folder Root Terdeteksi: <strong class="text-amber-400" x-text="testResult.folderName"></strong></p>
+                </template>
+            </div>
+
+            <!-- Save Status Message -->
+            <div x-show="saveFeedback.msg" class="p-3.5 rounded-xl text-xs flex items-center gap-2" :class="saveFeedback.isError ? 'bg-rose-500/10 border border-rose-500/20 text-rose-300' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'">
+                <span x-text="saveFeedback.msg"></span>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <!-- Test Connection Button -->
+                <button 
+                    @click="runTestConnection()" 
+                    :disabled="isTesting || !rootFolderId || !serviceAccountEmail"
+                    class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2"
+                >
+                    <svg class="w-4 h-4 text-amber-400" :class="isTesting ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span x-text="isTesting ? 'Menguji Koneksi...' : 'Uji Koneksi GDrive'"></span>
+                </button>
+
+                <!-- Save & Go To Catalog Button -->
+                <button 
+                    @click="saveConfiguration()" 
+                    :disabled="isSaving || !rootFolderId || !serviceAccountEmail"
+                    class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-bold shadow-lg shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-2"
+                >
+                    <svg class="w-4 h-4" :class="isSaving ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span x-text="isSaving ? 'Menyimpan...' : 'Simpan & Buka Katalog'"></span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Wizard Alpine.js Script -->
+    <script>
+        function setupWizard() {
+            return {
+                serviceAccountEmail: "{{ sa_info if sa_valid else '' }}",
+                rootFolderId: "{{ root_folder_id or '' }}",
+                adminPin: "{{ admin_pin or '123456' }}",
+                portalTitle: "{{ title or '' }}",
+                portalSubtitle: "",
+                
+                isDragging: false,
+                isUploading: false,
+                isTesting: false,
+                isSaving: false,
+                copied: false,
+
+                uploadFeedback: { msg: '', isError: false },
+                testResult: { tested: false, ok: false, msg: '', folderName: '' },
+                saveFeedback: { msg: '', isError: false },
+
+                async init() {
+                    // Check initial status
+                    try {
+                        const res = await fetch('/api/admin/status');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.service_account_email) {
+                                this.serviceAccountEmail = data.service_account_email;
+                            }
+                            if (data.root_folder_id) {
+                                this.rootFolderId = data.root_folder_id;
+                            }
+                            if (data.portal_title) {
+                                this.portalTitle = data.portal_title;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Failed to load initial admin status:', e);
+                    }
+                },
+
+                handleFileDrop(e) {
+                    this.isDragging = false;
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.uploadFile(files[0]);
+                    }
+                },
+
+                handleFileSelect(e) {
+                    const files = e.target.files;
+                    if (files.length > 0) {
+                        this.uploadFile(files[0]);
+                    }
+                },
+
+                async uploadFile(file) {
+                    if (!file.name.endsWith('.json')) {
+                        this.uploadFeedback = { msg: 'File harus berekstensi .json', isError: true };
+                        return;
+                    }
+
+                    this.isUploading = true;
+                    this.uploadFeedback = { msg: '', isError: false };
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    try {
+                        const res = await fetch('/api/admin/upload-credentials', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (!res.ok) {
+                            throw new Error(data.detail || 'Gagal mengunggah file credentials.');
+                        }
+                        this.serviceAccountEmail = data.client_email;
+                        this.uploadFeedback = { msg: `File credentials.json berhasil diunggah! Terdeteksi: ${data.client_email}`, isError: false };
+                    } catch (err) {
+                        this.uploadFeedback = { msg: err.message, isError: true };
+                    } finally {
+                        this.isUploading = false;
+                    }
+                },
+
+                copyEmail() {
+                    if (!this.serviceAccountEmail) return;
+                    navigator.clipboard.writeText(this.serviceAccountEmail);
+                    this.copied = true;
+                    setTimeout(() => { this.copied = false; }, 2500);
+                },
+
+                async runTestConnection() {
+                    if (!this.rootFolderId) {
+                        alert('Masukkan Google Drive Root Folder ID terlebih dahulu!');
+                        return;
+                    }
+                    this.isTesting = true;
+                    this.testResult = { tested: false, ok: false, msg: '', folderName: '' };
+
+                    // Save config temporarily first so test_connection can use the updated root folder
+                    try {
+                        await fetch('/api/admin/save-config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                root_folder_id: this.rootFolderId,
+                                admin_pin: this.adminPin,
+                                portal_title: this.portalTitle
+                            })
+                        });
+
+                        const res = await fetch('/api/admin/test-connection');
+                        const data = await res.json();
+                        this.testResult = {
+                            tested: true,
+                            ok: data.connection_ok,
+                            msg: data.message,
+                            folderName: data.folder ? data.folder.name : ''
+                        };
+                    } catch (err) {
+                        this.testResult = {
+                            tested: true,
+                            ok: false,
+                            msg: `Terjadi kesalahan saat pengujian: ${err.message}`,
+                            folderName: ''
+                        };
+                    } finally {
+                        this.isTesting = false;
+                    }
+                },
+
+                async saveConfiguration() {
+                    if (!this.rootFolderId) {
+                        this.saveFeedback = { msg: 'Google Drive Root Folder ID wajib diisi!', isError: true };
+                        return;
+                    }
+
+                    this.isSaving = true;
+                    this.saveFeedback = { msg: '', isError: false };
+
+                    try {
+                        const res = await fetch('/api/admin/save-config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                root_folder_id: this.rootFolderId,
+                                admin_pin: this.adminPin,
+                                portal_title: this.portalTitle
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (!res.ok) {
+                            throw new Error(data.detail || 'Gagal menyimpan konfigurasi.');
+                        }
+
+                        this.saveFeedback = { msg: 'Konfigurasi berhasil disimpan! Mengarahkan ke katalog...', isError: false };
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1200);
+                    } catch (err) {
+                        this.saveFeedback = { msg: err.message, isError: true };
+                    } finally {
+                        this.isSaving = false;
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>

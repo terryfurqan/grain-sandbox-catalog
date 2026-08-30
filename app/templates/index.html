@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Data Catalog</title>
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151f32',
+                            900: '#0f172a',
+                            950: '#080c16',
+                        },
+                        amber: {
+                            450: '#f7ab0a',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/custom.css">
+    
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+    <!-- App Controller -->
+    <script src="/static/js/app.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950" x-data="catalogApp()" x-init="init()" x-cloak>
+
+    <!-- Top Navigation Bar Component -->
+    {% include "components/navbar.html" %}
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Header Stats & Quick Overview -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            <!-- Total Experiments -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3 shadow-sm hover:border-slate-700 transition-colors">
+                <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-medium text-slate-400">Eksperimen</span>
+                    <h4 class="text-lg font-bold text-white leading-none mt-1" x-text="stats.total_experiments">0</h4>
+                </div>
+            </div>
+
+            <!-- Total Videos -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3 shadow-sm hover:border-slate-700 transition-colors">
+                <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-medium text-slate-400">Video MP4</span>
+                    <h4 class="text-lg font-bold text-white leading-none mt-1" x-text="stats.total_videos">0</h4>
+                </div>
+            </div>
+
+            <!-- Total Photos -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3 shadow-sm hover:border-slate-700 transition-colors">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-medium text-slate-400">Foto & Frame</span>
+                    <h4 class="text-lg font-bold text-white leading-none mt-1" x-text="stats.total_photos">0</h4>
+                </div>
+            </div>
+
+            <!-- Total Size -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3 shadow-sm hover:border-slate-700 transition-colors">
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7zm0 5h16M9 4v16" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-medium text-slate-400">Total Ukuran</span>
+                    <h4 class="text-lg font-bold text-emerald-400 leading-none mt-1" x-text="stats.total_size_formatted">0 B</h4>
+                </div>
+            </div>
+
+            <!-- Total Files / Status -->
+            <div class="col-span-2 sm:col-span-1 bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3 shadow-sm hover:border-slate-700 transition-colors">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-medium text-slate-400">Total File</span>
+                    <h4 class="text-lg font-bold text-white leading-none mt-1" x-text="stats.total_files">0</h4>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Toolbar: Quick Filters & Search Status -->
+        <section class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+            <!-- Filter Pills -->
+            <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-xs font-semibold text-slate-400 mr-1.5 hidden sm:inline">Filter:</span>
+                <button 
+                    @click="setFilter('all')" 
+                    :class="filterType === 'all' ? 'bg-amber-500 text-slate-950 font-bold shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'"
+                    class="px-3 py-1 rounded-lg text-xs transition-all flex items-center gap-1.5"
+                >
+                    <span>Semua</span>
+                    <span class="text-[10px] opacity-75" x-text="'(' + (stats.total_experiments || 0) + ')'"></span>
+                </button>
+                <button 
+                    @click="setFilter('video')" 
+                    :class="filterType === 'video' ? 'bg-amber-500 text-slate-950 font-bold shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'"
+                    class="px-3 py-1 rounded-lg text-xs transition-all flex items-center gap-1.5"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    </svg>
+                    <span>Hanya Video MP4</span>
+                </button>
+                <button 
+                    @click="setFilter('image')" 
+                    :class="filterType === 'image' ? 'bg-indigo-500 text-white font-bold shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'"
+                    class="px-3 py-1 rounded-lg text-xs transition-all flex items-center gap-1.5"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Hanya Foto</span>
+                </button>
+                <button 
+                    @click="setFilter('document')" 
+                    :class="filterType === 'document' ? 'bg-cyan-500 text-slate-950 font-bold shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'"
+                    class="px-3 py-1 rounded-lg text-xs transition-all flex items-center gap-1.5"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Slices / Laporan</span>
+                </button>
+                <button 
+                    @click="setFilter('archive')" 
+                    :class="filterType === 'archive' ? 'bg-emerald-500 text-slate-950 font-bold shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'"
+                    class="px-3 py-1 rounded-lg text-xs transition-all flex items-center gap-1.5"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    <span>Raw / NPZ</span>
+                </button>
+            </div>
+
+            <!-- Last Sync indicator -->
+            <div class="flex items-center gap-2 text-xs text-slate-400">
+                <span class="inline-block w-2 h-2 rounded-full" :class="isSyncing ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'"></span>
+                <span x-text="isSyncing ? 'Sinkronisasi sedang berjalan...' : (stats.last_sync ? 'Sinkronisasi: ' + formatDate(stats.last_sync.finished_at || stats.last_sync.started_at) : 'Belum pernah sinkronisasi')"></span>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: SEARCH RESULTS VIEW (When search is actively query-driven) -->
+        <!-- ================================================================= -->
+        <section x-show="isSearching" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-base font-bold text-white">Hasil Pencarian</h2>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700" x-text="searchResults.length + ' file ditemukan'"></span>
+                </div>
+                <button 
+                    @click="clearSearch()" 
+                    class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span>Reset Pencarian</span>
+                </button>
+            </div>
+
+            <!-- Search Result Items Table/Grid -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <template x-if="searchResults.length === 0">
+                    <div class="p-12 text-center text-slate-400">
+                        <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p class="text-sm font-medium text-slate-300">Tidak ada file yang cocok dengan kata kunci</p>
+                        <p class="text-xs text-slate-500 mt-1">Coba kata kunci lain seperti 'MP4', 'QPIV', 'Slice', atau '01.01'.</p>
+                    </div>
+                </template>
+
+                <template x-if="searchResults.length > 0">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-800/80 text-slate-400 font-semibold border-b border-slate-800">
+                                <tr>
+                                    <th class="px-4 py-3">File Name</th>
+                                    <th class="px-4 py-3">Path / Eksperimen</th>
+                                    <th class="px-4 py-3">Tipe</th>
+                                    <th class="px-4 py-3">Ukuran</th>
+                                    <th class="px-4 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <template x-for="file in searchResults" :key="file.file_id">
+                                    <tr class="hover:bg-slate-800/40 transition-colors">
+                                        <td class="px-4 py-3 font-medium text-white flex items-center gap-2.5">
+                                            <!-- File Type Icon -->
+                                            <span 
+                                                class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                                                :class="{
+                                                    'bg-amber-500/10 text-amber-400 border border-amber-500/20': file.file_type === 'video',
+                                                    'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20': file.file_type === 'image',
+                                                    'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20': file.file_type === 'document',
+                                                    'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': file.file_type === 'archive',
+                                                    'bg-slate-700/40 text-slate-400': file.file_type === 'other'
+                                                }"
+                                            >
+                                                <template x-if="file.file_type === 'video'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                                                </template>
+                                                <template x-if="file.file_type === 'image'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                </template>
+                                                <template x-if="file.file_type === 'document'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                                </template>
+                                                <template x-if="file.file_type === 'archive'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                                                </template>
+                                                <template x-if="file.file_type === 'other'">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                                </template>
+                                            </span>
+                                            <span class="truncate max-w-xs sm:max-w-md" x-text="file.name"></span>
+                                        </td>
+                                        <td class="px-4 py-3 text-slate-400 font-mono text-[11px] truncate max-w-[200px]" x-text="file.relative_path || '-'"></td>
+                                        <td class="px-4 py-3 capitalize">
+                                            <span 
+                                                class="px-2 py-0.5 rounded text-[10px] font-medium"
+                                                :class="{
+                                                    'bg-amber-500/10 text-amber-300 border border-amber-500/20': file.file_type === 'video',
+                                                    'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20': file.file_type === 'image',
+                                                    'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20': file.file_type === 'document',
+                                                    'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20': file.file_type === 'archive',
+                                                    'bg-slate-800 text-slate-400': file.file_type === 'other'
+                                                }"
+                                                x-text="file.file_type"
+                                            ></span>
+                                        </td>
+                                        <td class="px-4 py-3 font-mono text-[11px] text-slate-400" x-text="file.size_formatted"></td>
+                                        <td class="px-4 py-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button 
+                                                    x-show="file.file_type === 'video' || file.file_type === 'image'"
+                                                    @click="openMedia(file)"
+                                                    class="p-1.5 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 rounded-lg transition-colors"
+                                                    title="Putar / Preview"
+                                                >
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                </button>
+                                                <a 
+                                                    :href="'/api/download/' + file.file_id + '?filename=' + encodeURIComponent(file.name)"
+                                                    class="p-1.5 bg-slate-800 hover:bg-indigo-600 text-slate-200 rounded-lg transition-colors"
+                                                    title="Download File"
+                                                >
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: CARD GRID VIEW (Folder Level-1 Experiments) -->
+        <!-- ================================================================= -->
+        <section x-show="viewMode === 'grid' && !isSearching" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-white tracking-tight">Katalog Eksperimen Sandbox</h2>
+                    <p class="text-xs text-slate-400">Pilih eksperimen untuk melihat video hasil, foto time-lapse, dan file analisis.</p>
+                </div>
+                <span class="text-xs text-slate-400" x-text="filteredExperiments.length + ' folder ditemukan'"></span>
+            </div>
+
+            <!-- Empty State: No Experiments Found -->
+            <template x-if="experiments.length === 0">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-12 text-center max-w-lg mx-auto my-8">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Belum Ada Data Eksperimen Terindeks</h3>
+                    <p class="text-xs text-slate-400 mt-2 mb-6">Database katalog masih kosong. Silakan jalankan sinkronisasi Google Drive atau pastikan konfigurasi Root Folder ID sudah benar.</p>
+                    <div class="flex items-center justify-center gap-3">
+                        <button 
+                            @click="openSyncModal()"
+                            class="px-4 py-2 bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white rounded-lg text-xs font-bold shadow-md shadow-amber-500/20 transition-all flex items-center gap-2"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                            <span>Sinkronkan Sekarang</span>
+                        </button>
+                        <a 
+                            href="/setup"
+                            class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors"
+                        >
+                            Cek Pengaturan
+                        </a>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Card Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <template x-for="exp in filteredExperiments" :key="exp.folder_id">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden card-hover-effect flex flex-col justify-between group">
+                        <!-- Thumbnail Cover Canvas -->
+                        <div class="relative h-44 bg-slate-950 overflow-hidden flex items-center justify-center border-b border-slate-800">
+                            <!-- Image Cover if available -->
+                            <template x-if="exp.cover_file_id">
+                                <img 
+                                    :src="'/api/preview/image/' + exp.cover_file_id" 
+                                    :alt="exp.name"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                    @error="$el.style.display='none'"
+                                >
+                            </template>
+                            
+                            <!-- Fallback Geological Gradient / Graphic when no cover or image fails -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950/40 flex flex-col items-center justify-center p-4 text-center pointer-events-none">
+                                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-2 group-hover:rotate-6 transition-transform">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                </div>
+                                <span class="text-[11px] font-mono text-slate-500">SANDBOX EXPERIMENT</span>
+                            </div>
+
+                            <!-- Floating Badges on Top of Cover -->
+                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-900/90 text-amber-400 border border-amber-500/30 backdrop-blur-md flex items-center gap-1 shadow">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span x-text="exp.video_count + ' Video MP4'"></span>
+                                </span>
+
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-medium bg-slate-900/90 text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow" x-text="exp.total_size_formatted"></span>
+                            </div>
+
+                            <!-- Bottom Cover Overlay Badges -->
+                            <div class="absolute bottom-2 left-3 flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900/80 text-indigo-300 border border-indigo-500/20 backdrop-blur-sm" x-text="exp.photo_count + ' Foto/Frame'"></span>
+                                <span x-show="exp.other_count > 0" class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900/80 text-cyan-300 border border-cyan-500/20 backdrop-blur-sm" x-text="exp.other_count + ' Dokumen/Data'"></span>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1" x-text="exp.name"></h3>
+                                <p class="text-xs text-slate-400 line-clamp-2 mt-1" x-text="exp.description || 'Folder eksperimen analog sandbox. Berisi file time-lapse foto, video kompresi, dan visualisasi strain.'"></p>
+                            </div>
+
+                            <!-- Metadata footer & Action Buttons -->
+                            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                                <span class="text-[11px] text-slate-500 font-mono truncate" x-text="'ID: ' + exp.folder_id.slice(0, 10) + '...'"></span>
+
+                                <div class="flex items-center gap-1.5">
+                                    <button 
+                                        @click="openFolderInExplorer(exp.folder_id)"
+                                        class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center gap-1"
+                                        title="Buka Hirarki Folder di File Explorer"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                        <span class="hidden sm:inline">Folder</span>
+                                    </button>
+
+                                    <button 
+                                        @click="openExperiment(exp.folder_id)"
+                                        class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 active:scale-95"
+                                    >
+                                        <span>Lihat Eksperimen</span>
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: FILE EXPLORER / SPLIT TREE VIEW -->
+        <!-- ================================================================= -->
+        <section x-show="viewMode === 'explorer' && !isSearching" class="space-y-4">
+            <!-- Explorer Top Navigation & Breadcrumbs -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+                <!-- Breadcrumbs -->
+                <nav class="flex items-center gap-1.5 text-xs text-slate-400 overflow-x-auto py-0.5">
+                    <button 
+                        @click="loadFolderItems('root')"
+                        class="flex items-center gap-1 text-slate-300 hover:text-amber-400 font-medium px-2 py-1 rounded hover:bg-slate-800 transition-colors shrink-0"
+                    >
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        <span>Root GDrive</span>
+                    </button>
+
+                    <template x-for="(crumb, idx) in breadcrumbs.slice(1)" :key="idx">
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-slate-600">/</span>
+                            <button 
+                                @click="crumb.id ? loadFolderItems(crumb.id) : null"
+                                :class="idx === breadcrumbs.length - 2 ? 'text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20' : 'text-slate-300 hover:text-white hover:bg-slate-800'"
+                                class="px-2 py-1 rounded transition-colors truncate max-w-[180px]"
+                                x-text="crumb.name"
+                            ></button>
+                        </div>
+                    </template>
+                </nav>
+
+                <!-- Folder Item Count -->
+                <div class="flex items-center gap-3 text-xs text-slate-400">
+                    <span x-text="currentFolderItems.length + ' item dalam folder ini'"></span>
+                    <button 
+                        @click="loadFolderItems(currentFolderId)"
+                        class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                        title="Segarkan Folder"
+                    >
+                        <svg class="w-4 h-4" :class="isLoadingFolder ? 'animate-spin text-amber-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Split Panel: Left Tree / Hierarchy, Right Folder Content Table -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+                <!-- Left Sidebar: Experiment Quick Tree List -->
+                <div class="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-3 h-fit max-h-[750px] overflow-y-auto">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Daftar Folder Eksperimen</span>
+                        <span class="text-[10px] text-amber-400 font-mono" x-text="experiments.length"></span>
+                    </div>
+
+                    <div class="space-y-1">
+                        <!-- Root Node -->
+                        <button 
+                            @click="loadFolderItems('root')"
+                            :class="currentFolderId === 'root' ? 'tree-node-active text-amber-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
+                            class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all"
+                        >
+                            <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                            <span class="truncate">Root Sandbox</span>
+                        </button>
+
+                        <!-- Experiment Folders List -->
+                        <template x-for="exp in experiments" :key="exp.folder_id">
+                            <button 
+                                @click="loadFolderItems(exp.folder_id)"
+                                :class="currentFolderId === exp.folder_id ? 'tree-node-active text-amber-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
+                                class="w-full text-left px-2.5 py-2 rounded-lg text-xs transition-all flex items-center justify-between group"
+                            >
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <svg class="w-4 h-4 text-indigo-400 group-hover:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                    <span class="truncate" x-text="exp.name"></span>
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-mono" x-text="exp.video_count > 0 ? exp.video_count + 'v' : ''"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Right Main Panel: Folder Contents Grid/Table -->
+                <div class="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden min-h-[450px]">
+                    <!-- Loading state -->
+                    <div x-show="isLoadingFolder" class="p-12 text-center text-slate-400">
+                        <div class="inline-flex p-3 rounded-full bg-amber-500/10 text-amber-400 animate-spin mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        </div>
+                        <p class="text-xs">Memuat isi folder...</p>
+                    </div>
+
+                    <!-- Empty Folder state -->
+                    <div x-show="!isLoadingFolder && currentFolderItems.length === 0" class="p-16 text-center text-slate-500">
+                        <svg class="w-12 h-12 mx-auto text-slate-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-sm font-medium text-slate-400">Folder ini kosong</p>
+                        <p class="text-xs text-slate-600 mt-1">Tidak ada file atau subfolder yang terdeteksi di lokasi ini.</p>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div x-show="!isLoadingFolder && currentFolderItems.length > 0" class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-800/80 text-slate-400 font-semibold border-b border-slate-800">
+                                <tr>
+                                    <th class="px-4 py-3">Nama File / Folder</th>
+                                    <th class="px-4 py-3">Tipe</th>
+                                    <th class="px-4 py-3">Ukuran</th>
+                                    <th class="px-4 py-3">Terakhir Dimodifikasi</th>
+                                    <th class="px-4 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <template x-for="item in currentFolderItems" :key="item.file_id">
+                                    <tr class="hover:bg-slate-800/40 transition-colors group">
+                                        <!-- Name & Icon -->
+                                        <td class="px-4 py-3 font-medium text-white flex items-center gap-3">
+                                            <!-- Subfolder Icon -->
+                                            <template x-if="item.is_folder">
+                                                <button 
+                                                    @click="loadFolderItems(item.file_id)"
+                                                    class="flex items-center gap-2.5 text-amber-400 hover:text-amber-300 font-semibold text-left"
+                                                >
+                                                    <span class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                                    </span>
+                                                    <span class="truncate max-w-xs sm:max-w-md hover:underline" x-text="item.name"></span>
+                                                </button>
+                                            </template>
+
+                                            <!-- File Icon & Name -->
+                                            <template x-if="!item.is_folder">
+                                                <div class="flex items-center gap-2.5 overflow-hidden">
+                                                    <span 
+                                                        class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 cursor-pointer"
+                                                        :class="{
+                                                            'bg-amber-500/10 text-amber-400 border border-amber-500/20': item.file_type === 'video',
+                                                            'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20': item.file_type === 'image',
+                                                            'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20': item.file_type === 'document',
+                                                            'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': item.file_type === 'archive',
+                                                            'bg-slate-800 text-slate-400': item.file_type === 'other'
+                                                        }"
+                                                        @click="item.file_type === 'video' || item.file_type === 'image' ? openMedia(item) : null"
+                                                    >
+                                                        <template x-if="item.file_type === 'video'">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                                                        </template>
+                                                        <template x-if="item.file_type === 'image'">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                        </template>
+                                                        <template x-if="item.file_type === 'document'">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                                        </template>
+                                                        <template x-if="item.file_type === 'archive'">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                                                        </template>
+                                                        <template x-if="item.file_type === 'other'">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                                        </template>
+                                                    </span>
+                                                    <span 
+                                                        class="truncate max-w-xs sm:max-w-md cursor-pointer hover:text-amber-400 transition-colors"
+                                                        @click="item.file_type === 'video' || item.file_type === 'image' ? openMedia(item) : null"
+                                                        x-text="item.name"
+                                                    ></span>
+                                                </div>
+                                            </template>
+                                        </td>
+
+                                        <!-- Type -->
+                                        <td class="px-4 py-3 capitalize text-slate-400">
+                                            <span x-text="item.is_folder ? 'Folder' : item.file_type"></span>
+                                        </td>
+
+                                        <!-- Size -->
+                                        <td class="px-4 py-3 font-mono text-[11px] text-slate-400" x-text="item.is_folder ? '-' : item.size_formatted"></td>
+
+                                        <!-- Modified Date -->
+                                        <td class="px-4 py-3 text-slate-500 font-mono text-[11px]" x-text="formatDate(item.last_modified)"></td>
+
+                                        <!-- Actions -->
+                                        <td class="px-4 py-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <template x-if="item.is_folder">
+                                                    <button 
+                                                        @click="loadFolderItems(item.file_id)"
+                                                        class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs transition-colors"
+                                                    >
+                                                        Buka
+                                                    </button>
+                                                </template>
+
+                                                <template x-if="!item.is_folder">
+                                                    <div class="flex items-center gap-1">
+                                                        <button 
+                                                            x-show="item.file_type === 'video' || item.file_type === 'image'"
+                                                            @click="openMedia(item)"
+                                                            class="p-1.5 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 rounded-lg transition-colors"
+                                                            title="Preview / Putar"
+                                                        >
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                        </button>
+                                                        <a 
+                                                            :href="'/api/download/' + item.file_id + '?filename=' + encodeURIComponent(item.name)"
+                                                            class="p-1.5 bg-slate-800 hover:bg-indigo-600 text-slate-300 rounded-lg transition-colors"
+                                                            title="Download File"
+                                                        >
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                        </a>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- EXPERIMENT DETAIL MODAL / DRAWER -->
+        <!-- ================================================================= -->
+        <div 
+            x-show="showExpDetailModal" 
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+            style="display: none;"
+            @keydown.escape.window="closeExperimentModal()"
+        >
+            <div 
+                @click.outside="closeExperimentModal()"
+                class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+            >
+                <!-- Detail Header -->
+                <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white" x-text="selectedExperiment?.experiment?.name"></h3>
+                            <p class="text-xs text-slate-400" x-text="selectedExperiment?.experiment?.total_size_formatted + ' total ukuran'"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button 
+                            @click="openFolderInExplorer(selectedExperiment?.experiment?.folder_id)"
+                            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors"
+                        >
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                            <span>Buka di Explorer</span>
+                        </button>
+                        <button 
+                            @click="closeExperimentModal()" 
+                            class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Tabs inside modal -->
+                <div class="px-6 pt-3 pb-1 border-b border-slate-800 bg-slate-900/60 flex items-center gap-2 overflow-x-auto">
+                    <button 
+                        @click="expTab = 'all'" 
+                        :class="expTab === 'all' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="px-3 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1"
+                    >
+                        <span>Semua File</span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + (selectedExperiment?.files?.length || 0) + ')'"></span>
+                    </button>
+                    <button 
+                        @click="expTab = 'video'" 
+                        :class="expTab === 'video' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="px-3 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1"
+                    >
+                        <span>Video MP4</span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + (selectedExperiment?.files?.filter(f => f.file_type === 'video').length || 0) + ')'"></span>
+                    </button>
+                    <button 
+                        @click="expTab = 'image'" 
+                        :class="expTab === 'image' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="px-3 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1"
+                    >
+                        <span>Foto / Time-lapse</span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + (selectedExperiment?.files?.filter(f => f.file_type === 'image').length || 0) + ')'"></span>
+                    </button>
+                    <button 
+                        @click="expTab = 'document'" 
+                        :class="expTab === 'document' ? 'border-cyan-500 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="px-3 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1"
+                    >
+                        <span>Slices / Laporan</span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + (selectedExperiment?.files?.filter(f => f.file_type === 'document').length || 0) + ')'"></span>
+                    </button>
+                    <button 
+                        @click="expTab = 'archive'" 
+                        :class="expTab === 'archive' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="px-3 py-2 text-xs font-semibold border-b-2 transition-colors flex items-center gap-1"
+                    >
+                        <span>Raw / NPZ</span>
+                        <span class="text-[10px] opacity-75" x-text="'(' + (selectedExperiment?.files?.filter(f => f.file_type === 'archive').length || 0) + ')'"></span>
+                    </button>
+                </div>
+
+                <!-- Files Table Body -->
+                <div class="p-6 overflow-y-auto flex-1 max-h-[60vh]">
+                    <template x-if="filteredExpFiles.length === 0">
+                        <div class="py-12 text-center text-slate-500">
+                            <p class="text-xs">Tidak ada file dalam kategori ini.</p>
+                        </div>
+                    </template>
+
+                    <template x-if="filteredExpFiles.length > 0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <template x-for="file in filteredExpFiles" :key="file.file_id">
+                                <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 flex items-center justify-between gap-3 hover:border-slate-600 transition-colors">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        <span 
+                                            class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 cursor-pointer"
+                                            :class="{
+                                                'bg-amber-500/10 text-amber-400 border border-amber-500/20': file.file_type === 'video',
+                                                'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20': file.file_type === 'image',
+                                                'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20': file.file_type === 'document',
+                                                'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': file.file_type === 'archive',
+                                                'bg-slate-700 text-slate-300': file.file_type === 'other'
+                                            }"
+                                            @click="file.file_type === 'video' || file.file_type === 'image' ? openMedia(file) : null"
+                                        >
+                                            <template x-if="file.file_type === 'video'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                                            </template>
+                                            <template x-if="file.file_type === 'image'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            </template>
+                                            <template x-if="file.file_type === 'document'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                            </template>
+                                            <template x-if="file.file_type === 'archive'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                                            </template>
+                                            <template x-if="file.file_type === 'other'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                            </template>
+                                        </span>
+
+                                        <div class="truncate">
+                                            <h4 
+                                                class="text-xs font-semibold text-white truncate cursor-pointer hover:text-amber-400 transition-colors"
+                                                @click="file.file_type === 'video' || file.file_type === 'image' ? openMedia(file) : null"
+                                                x-text="file.name"
+                                            ></h4>
+                                            <p class="text-[11px] text-slate-400 font-mono" x-text="file.size_formatted"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button 
+                                            x-show="file.file_type === 'video' || file.file_type === 'image'"
+                                            @click="openMedia(file)"
+                                            class="p-1.5 bg-slate-700/60 hover:bg-amber-500 hover:text-slate-950 text-slate-200 rounded-lg text-xs font-medium transition-colors"
+                                            title="Preview / Putar"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                        </button>
+                                        <a 
+                                            :href="'/api/download/' + file.file_id + '?filename=' + encodeURIComponent(file.name)"
+                                            class="p-1.5 bg-slate-700/60 hover:bg-indigo-600 text-slate-200 rounded-lg transition-colors"
+                                            title="Download File"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900/60 border-t border-slate-800 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+            <p>GRAIN 2.0 &bull; Geological & Tectonic Sandbox Modeling Server</p>
+            <p class="font-mono">Google Drive Cloud Storage Backend</p>
+        </div>
+    </footer>
+
+    <!-- Video & Image Player Modals Component -->
+    {% include "components/modal_player.html" %}
+
+    <!-- Google Drive Sync Modal Component -->
+    {% include "components/modal_sync.html" %}
+
+</body>
+</html>
