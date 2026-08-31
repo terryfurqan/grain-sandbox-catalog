@@ -1,7 +1,7 @@
-# ☁️ Panduan Deployment ke Google Cloud Run (GCP)
+﻿# ☁️ Panduan Deployment ke Google Cloud Run (GCP)
 ## Web Server GRAIN Sandbox Data Catalog (FastAPI + Docker)
 
-Panduan ini memandu Anda langkah demi langkah untuk mempublikasikan Web Server **GRAIN Sandbox Experiment Data Catalog** ke **Google Cloud Run** (layanan serverless container resmi dari Google Cloud).
+Panduan ini memandu Anda langkah demi langkah untuk mempublikasikan Web Server **GRAIN Sandbox Experiment Data Catalog** ke **Google Cloud Run** dengan konfigurasi **FinOps Hard-Capped** (menjamin tagihan tetap Rp 0 / Free Tier dan bebas risiko lonjakan biaya).
 
 ---
 
@@ -12,105 +12,88 @@ Panduan ini memandu Anda langkah demi langkah untuk mempublikasikan Web Server *
 | **Ekosistem & Latensi** | **1 Ekosistem dengan Google Drive** (Google Backbone Network, streaming ultra-cepat) | Terpisah (akses via internet publik) |
 | **Batas Gratis (Free Tier)** | **2 Juta Request/Bulan GRATIS** + 360.000 GiB-detik RAM gratis | Gratis 24/7 (2 vCPU, 16 GB RAM) |
 | **Scale-to-Zero** | ✅ Ya (Otomatis tidur saat tidak ada request, hemat biaya) | ❌ Selalu menyala (atau sleep mode) |
+| **Proteksi FinOps** | ✅ Hard limits (`max-instances=1`, in-memory rate limiting, auto cleanup) | Kuota CPU/RAM bawaan |
 | **HTTPS & Custom Domain** | ✅ Otomatis dapat URL HTTPS (`*.a.run.app`) + custom domain | ✅ Otomatis dapat URL HTTPS (`*.hf.space`) |
-| **Integrasi Service Account** | ✅ Native Google Cloud IAM | Menggunakan Secret String |
 
 ---
 
-## 📋 Ringkasan Alur Deployment ke Cloud Run
+## 🛡️ Prinsip Zero-Cost & FinOps Guardrails
 
-```mermaid
-flowchart TD
-    A[Repository GitHub: terryfurqan/grain-sandbox-catalog] -->|Terhubung| B[Google Cloud Build]
-    B -->|Build Dockerfile Otomatis| C[Google Artifact Registry]
-    C -->|Deploy Container| D[Google Cloud Run Service]
-    D -->|Koneksi via Service Account| E[Google Drive Cloud HDD]
-    D -->|Live URL HTTPS| F[https://grain-sandbox-catalog-xxxx.a.run.app]
+Proyek ini telah dikonfigurasi dengan perlindungan biaya berlapis:
+1. **In-Memory Rate Limiting (SlowAPI)**: Mencegah bot/crawler luar menguras bandwidth streaming.
+2. **HTTP 206 Caching (7 Hari)**: Browser pengguna menyimpan cache video/foto secara lokal sehingga seek/replay tidak menyedot egress cloud.
+3. **Hard Cap `max-instances=1`**: Cloud Run tidak akan pernah auto-scale tak terbatas saat diserang traffic tinggi.
+4. **Artifact Registry Auto Cleanup**: Hanya menyimpan 2 versi Docker image terakhir (`cleanup-policy.json`).
+5. **Automated Kill-Switch**: Skrip pemutus otomatis jika budget mencapai $5 (Lihat [finops/FINOPS_GUARDRAILS_GUIDE.md](finops/FINOPS_GUARDRAILS_GUIDE.md)).
+
+---
+
+## ⚡ Pilihan 1: Deploy Otomatis 1-Klik (Disarankan)
+
+### Untuk Pengguna Windows:
+Cukup klik ganda file:
+```cmd
+deploy_cloud_run.bat
+```
+Masukkan Google Cloud Project ID Anda saat diminta. Script akan otomatis:
+- Mengaktifkan API Cloud Run & Artifact Registry.
+- Membuat repo Docker dan memasang *Cleanup Policy*.
+- Melakukan build dan deploy dengan parameter hemat daya.
+
+### Untuk Pengguna Linux / MacOS / Google Cloud Shell:
+```bash
+chmod +x deploy_cloud_run.sh
+./deploy_cloud_run.sh
 ```
 
 ---
 
-## 🚀 Pilihan 1: Deploy Lewat Web Console Google Cloud (Paling Mudah, Tanpa Install CLI)
+## 🚀 Pilihan 2: Deploy Lewat Web Console Google Cloud
 
-Metode ini dilakukan langsung melalui web browser di Google Cloud Console dengan menghubungkan repositori GitHub Anda.
+Jika ingin melakukan setup manual melalui browser di Google Cloud Console:
 
 ### 1️⃣ Langkah 1: Buka Cloud Run di Google Cloud Console
 1. Buka [Google Cloud Console](https://console.cloud.google.com/).
-2. Pastikan Anda telah memilih Project GCP Anda (misalnya project tempat Service Account Google Drive dibuat).
-3. Di bilah pencarian atas, ketik **Cloud Run** atau buka langsung: **[console.cloud.google.com/run](https://console.cloud.google.com/run)**.
-4. Klik tombol **+ CREATE SERVICE** (Buat Layanan).
+2. Buka menu **Cloud Run** atau buka: **[console.cloud.google.com/run](https://console.cloud.google.com/run)**.
+3. Klik tombol **+ CREATE SERVICE** (Buat Layanan).
 
 ---
 
 ### 2️⃣ Langkah 2: Hubungkan Repositori GitHub
-1. Pada pilihan *Deployment platform*, pilih:
-   - **Continuously deploy from a repository** (Deploy berkelanjutan dari repositori).
+1. Pada pilihan *Deployment platform*, pilih **Continuously deploy from a repository**.
 2. Klik tombol **SET UP WITH CLOUD BUILD**.
-3. Pilih penyedia Git: **GitHub**.
-4. Berikan otorisasi akun GitHub Anda dan pilih repositori:
-   - **Repository**: `terryfurqan/grain-sandbox-catalog` (atau akun/repo Anda).
-5. Pada *Branch*, pilih: `^main$`.
-6. Pada *Build Type*, pilih: **Dockerfile** (lokasi: `/Dockerfile`).
-7. Klik **Save**.
+3. Pilih penyedia Git: **GitHub**, pilih repositori `grain-sandbox-catalog`, branch `^main$`, dan Build Type `Dockerfile`.
 
 ---
 
-### 3️⃣ Langkah 3: Konfigurasi Service Cloud Run
-1. **Service name**: `grain-sandbox-catalog` (atau nama pilihan Anda).
-2. **Region**: Pilih region terdekat, misalnya:
-   - `asia-southeast1` (Singapura) — *Sangat direkomendasikan untuk Indonesia*
-   - `asia-southeast2` (Jakarta)
-3. **Authentication**:
-   - Pilih **Allow unauthenticated invocations** (agar web portal dapat dibuka oleh tim/publik tanpa login akun IAM GCP).
-4. **CPU allocation and pricing**:
-   - Pilih **CPU is only allocated during request processing** (Sangat hemat / masuk Free Tier).
+### 3️⃣ Langkah 3: Konfigurasi Service Cloud Run (Wajib FinOps)
+1. **Service name**: `grain-server`
+2. **Region**: `asia-southeast2` (Jakarta) atau `asia-southeast1` (Singapura).
+3. **Authentication**: **Allow unauthenticated invocations**.
+4. **Autoscaling (PENTING)**:
+   - **Minimum number of instances**: `0` (Tidur saat idle).
+   - **Maximum number of instances**: `1` (Anti pembengkakan biaya).
+5. **Ingress control**: All (Traffic publik diizinkan).
+6. **CPU allocation**: **CPU is only allocated during request processing** (CPU throttling aktif).
+7. **Concurrency**: `80` requests per instance.
+8. **Container memory**: `512 MiB`, CPU: `1`.
 
 ---
 
 ### 4️⃣ Langkah 4: Tambahkan Environment Variables
-1. Buka menu akordeon **Container, Volumes, Networking, Security** di bagian bawah.
-2. Di tab **Container**, buka sub-bagian **Variables & Secrets**.
-3. Klik **+ ADD VARIABLE** dan masukkan variabel berikut:
+Di tab **Container > Variables & Secrets**, tambahkan variabel berikut:
 
 | Name | Value | Keterangan |
 |---|---|---|
 | `GDRIVE_ROOT_FOLDER_ID` | *(Folder ID Google Drive Anda)* | ID folder data sandbox dari URL Google Drive |
-| `ADMIN_PIN` | `123456` | PIN admin untuk akses `/setup` & refresh index |
+| `ADMIN_PIN` | `123456` | PIN admin untuk akses `/setup` & sync |
 | `PORTAL_TITLE` | `GRAIN Sandbox Experiment Data Server` | Judul portal |
 | `PORTAL_SUBTITLE` | `Analog Geological & Tectonic Modeling Video/Photo Catalog` | Subjudul portal |
 | `GDRIVE_SERVICE_ACCOUNT_RAW_JSON` | *(String JSON dari credentials.json)* | Salin dari output `python generate_cloud_env.py` |
-
-> 💡 **Cara Cepat Menyalin `GDRIVE_SERVICE_ACCOUNT_RAW_JSON`**:
-> Jalankan perintah berikut di terminal komputer lokal Anda:
-> ```bash
-> python generate_cloud_env.py
-> ```
-> String JSON kredensial otomatis disalin ke clipboard Anda! Tinggal tekan `Ctrl+V` di kolom Value.
+| `APP_ACCESS_TOKEN` | *(Opsional)* | Token shared internal jika ingin mengunci akses publik |
 
 4. Klik **CREATE**.
-5. Tunggu 1–2 menit hingga proses build dan deployment selesai. Google Cloud Run akan memberikan URL publik HTTPS Anda (misal: `https://grain-sandbox-catalog-xxxxxxxx-as.a.run.app`).
-
----
-
-## ⚡ Pilihan 2: Deploy Cepat via Google Cloud Shell (1 Perintah)
-
-Jika Anda ingin deploy instan dalam 1 perintah tanpa instalasi apapun di PC lokal:
-
-1. Buka Google Cloud Console dan klik ikon **Cloud Shell** (ikon `>_` di pojok kanan atas browser).
-2. Di dalam terminal Cloud Shell, jalankan:
-   ```bash
-   git clone https://github.com/terryfurqan/grain-sandbox-catalog.git
-   cd grain-sandbox-catalog
-   ```
-3. Deploy langsung ke Cloud Run dengan perintah berikut:
-   ```bash
-   gcloud run deploy grain-sandbox-catalog \
-     --source . \
-     --region asia-southeast1 \
-     --allow-unauthenticated \
-     --set-env-vars GDRIVE_ROOT_FOLDER_ID="YOUR_FOLDER_ID",ADMIN_PIN="123456"
-   ```
-4. Masukkan string kredensial service account bila diminta, atau atur via Secret Manager.
+5. Tunggu 1–2 menit hingga URL HTTPS aktif (misal: `https://grain-server-xxxxxxxx-as.a.run.app`).
 
 ---
 

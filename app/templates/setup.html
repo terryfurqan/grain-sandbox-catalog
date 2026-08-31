@@ -64,13 +64,37 @@
                 </div>
             </a>
 
-            <a 
-                href="/" 
-                class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                <span>Kembali ke Katalog</span>
-            </a>
+            <div class="flex items-center gap-3">
+                {% if user %}
+                <div class="flex items-center gap-2 pl-1 pr-2.5 py-1 bg-slate-800 border border-slate-700 rounded-xl">
+                    <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-[11px] font-bold text-slate-950 shadow-sm">
+                        TF
+                    </div>
+                    <div class="hidden sm:flex flex-col text-left">
+                        <span class="text-xs font-semibold text-slate-200 leading-none">{{ user }}</span>
+                        <span class="text-[10px] text-emerald-400 font-medium leading-tight">Admin</span>
+                    </div>
+                </div>
+                <a 
+                    href="/logout" 
+                    onclick="return confirm('Apakah Anda yakin ingin keluar (logout)?');"
+                    class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg border border-transparent hover:border-red-500/20 transition-all"
+                    title="Keluar dari sesi admin"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </a>
+                {% endif %}
+
+                <a 
+                    href="/" 
+                    class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    <span>Kembali ke Katalog</span>
+                </a>
+            </div>
         </div>
     </header>
 

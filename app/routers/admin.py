@@ -74,6 +74,13 @@ GDRIVE_ROOT_FOLDER_ID={req.root_folder_id.strip()}
 ADMIN_PIN={req.admin_pin.strip()}
 PORTAL_TITLE="{req.portal_title or settings.PORTAL_TITLE}"
 PORTAL_SUBTITLE="{req.portal_subtitle or settings.PORTAL_SUBTITLE}"
+
+# Authentication Credentials & Session Security
+ADMIN_USERNAME={settings.ADMIN_USERNAME}
+ADMIN_PASSWORD={settings.ADMIN_PASSWORD}
+SESSION_SECRET_KEY={settings.SESSION_SECRET_KEY}
+REQUIRE_AUTH={str(settings.REQUIRE_AUTH).lower()}
+REQUIRE_AUTH_FOR_SETUP={str(settings.REQUIRE_AUTH_FOR_SETUP).lower()}
 """
     with open(env_path, "w", encoding="utf-8") as f:
         f.write(env_content)

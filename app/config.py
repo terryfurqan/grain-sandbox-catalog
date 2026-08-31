@@ -17,6 +17,23 @@ class Settings(BaseSettings):
     GDRIVE_SERVICE_ACCOUNT_RAW_JSON: str = "" # Opsi raw JSON string untuk cloud deployment
     DATABASE_PATH: str = str(BASE_DIR / "catalog.db")
 
+    # FinOps & Cost Defense Settings
+    RATE_LIMIT_DEFAULT: str = "120/minute"
+    RATE_LIMIT_STREAM: str = "30/minute"
+    RATE_LIMIT_DOWNLOAD: str = "10/minute"
+    CACHE_MAX_AGE_MEDIA: int = 604800  # 7 days browser cache
+    APP_ACCESS_TOKEN: str = ""         # Optional token protection
+
+    # Authentication & Session Security
+    ADMIN_USERNAME: str = "terryfurqan"
+    ADMIN_PASSWORD: str = "ifasayang123"
+    SESSION_SECRET_KEY: str = "grain-sandbox-session-secret-key-terry-2026-auth"
+    SESSION_COOKIE_NAME: str = "grain_session"
+    SESSION_MAX_AGE: int = 604800      # 7 days session duration
+    REQUIRE_AUTH: bool = False         # Lock entire catalog to logged-in users only
+    REQUIRE_AUTH_FOR_SETUP: bool = True # Enforce login on setup and admin endpoints
+    SECURE_COOKIE: bool = False        # Set True for HTTPS in production
+
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
         env_file_encoding="utf-8",

@@ -23,6 +23,7 @@ if str(BASE_DIR) not in sys.path:
 
 from app.config import settings, Settings
 from app.database import get_db, init_db, format_file_size, categorize_file
+from app.auth import create_session_token
 from app.main import app
 
 
@@ -196,6 +197,8 @@ class TestFastAPIRoutes(unittest.TestCase):
 
     def setUp(self):
         self.client = TestClient(app)
+        token = create_session_token(settings.ADMIN_USERNAME)
+        self.client.cookies.set(settings.SESSION_COOKIE_NAME, token)
 
     def test_get_root_redirects_when_not_configured(self):
         """GET / harus me-redirect ke /setup jika server belum dikonfigurasi."""

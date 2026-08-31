@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "name": "keep-minimum-versions",
+      "action": "KEEP",
+      "condition": {
+        "tagState": "TAGGED",
+        "tagPrefixes": ["latest", "v"],
+        "versionCount": 2
+      }
+    },
+    {
+      "name": "delete-untagged-or-older-than-7d",
+      "action": "DELETE",
+      "condition": {
+        "olderThan": "604800s"
+      }
+    }
+  ]
+}

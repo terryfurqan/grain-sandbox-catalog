@@ -55,3 +55,8 @@ class SetupConfigRequest(BaseModel):
     admin_pin: str
     portal_title: Optional[str] = None
     portal_subtitle: Optional[str] = None
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+    next: Optional[str] = "/"

@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from typing import List, Optional, Dict, Any
 from app.database import get_db, format_file_size
 from app.config import settings
+from app.limiter import limiter
 
 router = APIRouter(prefix="/api", tags=["Catalog"])
 
 @router.get("/stats")
-def get_catalog_stats():
+@limiter.limit(settings.RATE_LIMIT_DEFAULT)
+def get_catalog_stats(request: Request):
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) as count, SUM(total_size_bytes) as total_size FROM experiments;")
@@ -37,7 +39,8 @@ def get_catalog_stats():
         }
 
 @router.get("/experiments")
-def list_experiments():
+@limiter.limit(settings.RATE_LIMIT_DEFAULT)
+def list_experiments(request: Request):
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM experiments ORDER BY name ASC;")
@@ -47,7 +50,8 @@ def list_experiments():
         return rows
 
 @router.get("/experiments/{folder_id}")
-def get_experiment_detail(folder_id: str):
+@limiter.limit(settings.RATE_LIMIT_DEFAULT)
+def get_experiment_detail(folder_id: str, request: Request):
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM experiments WHERE folder_id = ?;", (folder_id,))
@@ -74,7 +78,8 @@ def get_experiment_detail(folder_id: str):
         }
 
 @router.get("/folders/{folder_id}/items")
-def get_folder_items(folder_id: str):
+@limiter.limit(settings.RATE_LIMIT_DEFAULT)
+def get_folder_items(folder_id: str, request: Request):
     """
     Mengambil subfolder dan file yang langsung berada di bawah folder_id tertentu (untuk File Explorer / Tree).
     Jika folder_id == 'root', maka menggunakan GDRIVE_ROOT_FOLDER_ID.
@@ -130,7 +135,9 @@ def get_folder_items(folder_id: str):
         }
 
 @router.get("/search")
+@limiter.limit(settings.RATE_LIMIT_DEFAULT)
 def search_files(
+    request: Request,
     q: str = Query("", description="Search keyword"),
     file_type: Optional[str] = Query(None, description="Filter type: video, image, document, archive"),
     experiment_id: Optional[str] = Query(None, description="Filter by experiment folder ID")
