@@ -44,9 +44,11 @@ python grain_catalog_indexer.py --storage-dir "D:\999_GRAIN_EXPLORER\0010" --man
 
 ## 🔬 Scientific Falsification & Validation Suite (GRAIN PIV)
 
-Modul dan dokumentasi ilmiah pembuktian validitas algoritma PIV (5 Pilar Uji Falsifikasi):
-- 🇮🇩 **[Wiki Bahasa Indonesia](wiki/PIV_Falsifikasi_Kerangka_Uji_ID.md)**: Kerangka Uji Falsifikasi & Validasi Ilmiah PIV (GRAIN 2.0).
-- 🇬🇧 **[English Wiki](wiki/PIV_Scientific_Falsification_Framework_EN.md)**: PIV Scientific Falsification & Validation Framework (GRAIN 2.0).
+Modul dan dokumentasi ilmiah pembuktian validitas algoritma PIV (5 Pilar Uji Falsifikasi & Multi-Pass Optimization):
+- 🇬🇧 **[English Wiki: Multi-Pass Optimization & Time-Lapse Stress Testing](wiki/PIV_Multi_Pass_Optimization_and_Time_Lapse_Stress_Testing_EN.md)**: 1, 2, 3 vs 4 Pass Scaling, Dynamic Range Characterization, and Real Time-Lapse Skip Stress Testing (GRAIN 2.1).
+- 🇮🇩 **[Wiki ID: Optimasi Multi-Pass PIV & Uji Stres Time-Lapse](wiki/PIV_Multi_Pass_Optimasi_dan_Uji_Stress_Time_Lapse_ID.md)**: Komparasi 1, 2, 3 vs 4 Pass, Karakterisasi Dynamic Range, dan Uji Stres Time-Lapse Citra Riil (GRAIN 2.1).
+- 🇮🇩 **[Wiki Bahasa Indonesia: Kerangka Uji Falsifikasi](wiki/PIV_Falsifikasi_Kerangka_Uji_ID.md)**: Kerangka Uji Falsifikasi & Validasi Ilmiah PIV (GRAIN 2.0).
+- 🇬🇧 **[English Wiki: Scientific Falsification Framework](wiki/PIV_Scientific_Falsification_Framework_EN.md)**: PIV Scientific Falsification & Validation Framework (GRAIN 2.0).
 - 📊 **[Interactive HTML Dashboard](docs/piv_validation/falsification_report.html)**: Visualisasi Metrik Eror 10 Zona (MAE, RMSE, & Profil Sesar).
 - 📦 **[PIV Validation Assets & Scripts](docs/piv_validation/)**: Modul uji Python untuk 5 Pilar (Synthetic Benchmark, Peak-Locking, Physical Constraints, GeoMod Benchmark, & Uncertainty Map).
 
